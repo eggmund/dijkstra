@@ -17,19 +17,36 @@ def getNode(nodeID, graph):
             return node
     return None
 
+def getMinDist(distances):
+    lowest = [None, -1]
+    for node, dist in distances.items():
+        if dist < lowest[1] or lowest[1] == -1:
+            lowest = [node, dist]
+
+    return lowest
 
 def dijkstra(graph):
-    priority = [(graph[0], 0)]   # Priority queue holding (node, distance) tuples
-    priority = priority + [(node, -1) for node in graph[1:]]
-    
-    while len(priority) > 0:
-        curr = priority.pop()
-        for con in curr.cons:
-            other = getNode(con.other, priority)
-            if other == None:
-                raise LookupError("Couldn't find conn node.")
+    q = []
+    prev = {}
+    dist = {}
+    for node in graph:
+        q.append(node)
+        prev[node] = -1
+        dist[node] = -1
 
-        
+    dist[graph[0]] = 0
+
+    while len(q) > 0:
+        u = q.pop(0)
+
+        for con in u.cons:
+            alt = dist[u] + con.weight
+            node = getNode(con.other, graph)
+            if alt < dist[node] or dist[node] == -1:
+                dist[node] = alt
+                prev[node] = u
+
+    return dist, prev
 
 
 # Graph:
@@ -37,10 +54,13 @@ def dijkstra(graph):
 # B -> (A, 7), (D, 2), (E, 6), (C, 3)
 # C -> (B, 3), (E, 1), (D, 4)
 # D -> (A, 3), (B, 2), (C, 4), (E, 7)
+# E -> (D, 7), (B, 6), (C, 1)
 
-graph = [Node("A", [Con("D", 3), Con("B", 7)]),
-         Node("B", [Con("A", 7), Con("D", 2), Con("E", 6), Con("C", 3)]),
-         Node("C", [Con("B", 3), Con("E", 1), Con("D", 4)]),
-         Node("D", [Con("A", 3), Con("B", 2), Con("C", 4), Con("E", 7)])]
+if __name__ == "__main__":
+    graph = [Node("A", [Con("D", 3), Con("B", 7)]),
+             Node("B", [Con("A", 7), Con("D", 2), Con("E", 6), Con("C", 3)]),
+             Node("C", [Con("B", 3), Con("E", 1), Con("D", 4)]),
+             Node("D", [Con("A", 3), Con("B", 2), Con("C", 4), Con("E", 7)]),
+             Node("E", [Con("D", 7), Con("B", 6), Con("C", 1)])]
 
-dijkstra(graph)
+    print(dijkstra(graph))
