@@ -14,28 +14,50 @@ func (g *Graph) resetDistances() {
 	}
 }
 
-func (g *Graph) Dijkstra() []*Node {
-	out := make([]*Node, len(g.Nodes))
-
+func (g *Graph) Dijkstra() ([]*Node, []*Node) {
 	q := make([]*Node, len(g.Nodes))
 	copy(q, g.Nodes)
 
 	var prev []*Node
-
 	var u *Node
 	for len(q) > 0 {
-		u, q = q[0], q[1:]
-
+		u, q = getMinDistNode(q)
 		for _, v := range u.Cons {
 			alt := u.Dist + v.Weight
-			if alt < v.Other.Dist {
+			if (alt < v.Other.Dist) {
+				println("V:", v.Other.ID, "Alt:", alt, "other dist:", v.Other.Dist)
 				v.Other.Dist = alt
 				prev = append(prev, u)
 			}
 		}
 	}
 
-	copy(out, g.Nodes)
-	g.resetDistances()
-	return out
+	return g.Nodes, prev
+}
+
+func getMinDistNode(list []*Node) (*Node, []*Node) {
+	lowest := new(Node)
+	lowest.Dist = math.Inf(1)
+	var ind int = -1
+	for i := 0; i < len(list); i++ {
+		if list[i].Dist < lowest.Dist {
+			lowest = list[i]
+			ind = i
+		}
+	}
+
+	if ind > -1 {
+		list = append(list[:ind], list[ind+1:]...)
+	}
+	return lowest, list
+}
+
+func nodeIn(list []*Node, node *Node) bool {
+	for i := 0; i < len(list); i++ {
+		if list[i] == node {
+			return true
+		}
+	}
+
+	return false
 }

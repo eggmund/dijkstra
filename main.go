@@ -24,6 +24,7 @@ func loadTestGraph() *graph.Graph {
 	g.Nodes[0].ID = "A"
 	g.Nodes[0].Cons = []graph.Conn{graph.Conn{Other: g.Nodes[3], Weight: 3},
 																 graph.Conn{Other: g.Nodes[1], Weight: 7}}
+	g.Nodes[0].Dist = 0
 
   g.Nodes[1].ID = "B"
 	g.Nodes[1].Cons = []graph.Conn{graph.Conn{Other: g.Nodes[0], Weight: 7},
@@ -52,9 +53,12 @@ func loadTestGraph() *graph.Graph {
 
 func main() {
   g := loadTestGraph()
-	nodes := g.Dijkstra()
+	nodes, visited := g.Dijkstra()
 	println("Done")
 	for i := range nodes {
 		fmt.Println(nodes[i].ID, nodes[i].Dist)
+	}
+	for i := range visited {
+		fmt.Println(visited[i].ID)
 	}
 }
