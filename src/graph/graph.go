@@ -14,25 +14,35 @@ func (g *Graph) resetDistances() {
 	}
 }
 
-func (g *Graph) Dijkstra() ([]*Node, []*Node) {
+func (g *Graph) getOut() []Node {
+	var out []Node
+	for i := 0; i < len(g.Nodes); i++ {
+		out = append(out, *g.Nodes[i])
+	}
+	return out
+}
+
+func (g *Graph) Dijkstra(start *Node, targetID string) []Node {
+	start.Dist = 0
+
 	q := make([]*Node, len(g.Nodes))
 	copy(q, g.Nodes)
 
-	var prev []*Node
 	var u *Node
 	for len(q) > 0 {
 		u, q = getMinDistNode(q)
 		for _, v := range u.Cons {
 			alt := u.Dist + v.Weight
 			if (alt < v.Other.Dist) {
-				println("V:", v.Other.ID, "Alt:", alt, "other dist:", v.Other.Dist)
 				v.Other.Dist = alt
-				prev = append(prev, u)
 			}
 		}
 	}
 
-	return g.Nodes, prev
+	out := g.getOut()
+	g.resetDistances()
+
+	return out
 }
 
 func getMinDistNode(list []*Node) (*Node, []*Node) {

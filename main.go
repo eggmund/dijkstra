@@ -53,12 +53,9 @@ func loadTestGraph() *graph.Graph {
 
 func main() {
   g := loadTestGraph()
-	nodes, visited := g.Dijkstra()
+	results := g.Dijkstra(g.Nodes[0], "C")
 	println("Done")
-	for i := range nodes {
-		fmt.Println(nodes[i].ID, nodes[i].Dist)
-	}
-	for i := range visited {
-		fmt.Println(visited[i].ID)
+	for i := range results {
+		fmt.Println(results[i].ID, results[i].Dist)
 	}
 }
